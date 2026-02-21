@@ -19,21 +19,22 @@ def api_root(request):
     return JsonResponse({
         'service': 'Store Backend API',
         'version': '1.0.0',
+        'message': 'Welcome to Store API',
         'endpoints': {
             'auth': {
-                'register': 'POST /api/v1/users/register/',
-                'login': 'POST /api/v1/users/login/',
-                'refresh': 'POST /api/v1/users/token/refresh/',
-                'profile': 'GET /api/v1/users/profile/',
+                'register': '/api/v1/users/register/',
+                'login': '/api/v1/users/login/',
+                'refresh': '/api/v1/users/token/refresh/',
+                'profile': '/api/v1/users/profile/',
             },
             'products': {
-                'list': 'GET /api/v1/products/',
-                'categories': 'GET /api/v1/products/categories/',
+                'list': '/api/v1/products/',
+                'categories': '/api/v1/products/categories/',
             },
             'orders': {
-                'create': 'POST /api/v1/orders/',
-                'checkout': 'POST /api/v1/orders/checkout/',
-                'list': 'GET /api/v1/orders/',
+                'create': '/api/v1/orders/',
+                'checkout': '/api/v1/orders/checkout/',
+                'list': '/api/v1/orders/',
             },
         }
     })
@@ -42,6 +43,7 @@ def api_root(request):
 urlpatterns = [
     path('health/', health_check, name='health-check'),
     path('api/', api_root, name='api-root'),
+    path('api/v1/', api_root, name='api-root-v1'),
     path('api/v1/users/', include('apps.users.urls')),
     path('api/v1/products/', include('apps.products.urls')),
     path('api/v1/orders/', include('apps.orders.urls')),
