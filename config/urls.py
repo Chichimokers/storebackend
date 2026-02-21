@@ -47,7 +47,7 @@ urlpatterns = [
     path('api/v1/users/', include('apps.users.urls')),
     path('api/v1/products/', include('apps.products.urls')),
     path('api/v1/orders/', include('apps.orders.urls')),
-    path('api/v1/admin/', admin.site.urls),
+    path('api/v1/admin/', include('apps.admin.urls')),
 ]
 
 # Serve static and media files always (both DEBUG=True and DEBUG=False)

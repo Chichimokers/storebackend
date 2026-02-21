@@ -1,107 +1,189 @@
-# Documentación API - Panel de Administración
+# API de Administración - Endpoints Masters
 
-## Base URL
+**Base URL:** `https://tu-dominio.com/api/v1/`
+
+**Header requerido:**
 ```
-https://tu-dominio.com/api/v1/
-```
-
-## Autenticación
-
-### Login
-```
-POST /api/v1/users/login/
-Content-Type: application/json
-
-Request:
-{
-    "email": "admin@admin.com",
-    "password": "admin123"
-}
-
-Response (200):
-{
-    "user": {
-        "id": 1,
-        "email": "admin@admin.com",
-        "username": "admin",
-        "first_name": "Admin",
-        "last_name": "User",
-        "is_staff": true,
-        "is_superuser": true,
-        "is_active": true,
-        "created_at": "2024-01-01T00:00:00Z"
-    },
-    "tokens": {
-        "refresh": "eyJ...",
-        "access": "eyJ..."
-    }
-}
-```
-
-### Cómo saber si el usuario es Admin
-
-En el **login** o al obtener el **perfil**, el objeto `user` contiene los campos:
-- `is_staff`: true/false - Puede acceder al admin
-- `is_superuser`: true/false - Es superusuario
-
-```javascript
-// Después del login
-const response = await fetch('/api/v1/users/login/', {...});
-const { user } = await response.json();
-
-if (user.is_staff || user.is_superuser) {
-    // Mostrar panel de admin
-    showAdminPanel();
-} else {
-    // Solo usuario normal
-    showRegularUI();
-}
-
-// Obtener perfil actual
-const profileRes = await fetch('/api/v1/users/profile/', {
-    headers: {'Authorization': `Bearer ${token}`}
-});
-const profile = await profileRes.json();
-const isAdmin = profile.is_staff;
-```
-
-**Headers requeridos:**
-```
-Authorization: Bearer <access_token>
+Authorization: Bearer <token_admin>
 ```
 
 ---
 
-## Endpoints Disponibles
+## Endpoints de Admin
 
-### USUARIOS
-
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| GET | `/api/v1/users/profile/` | Ver mi perfil |
-| PUT | `/api/v1/users/profile/` | Actualizar mi perfil |
-| POST | `/api/v1/users/change-password/` | Cambiar mi contraseña |
+| Recurso | Métodos | Endpoint |
+|---------|---------|----------|
+| **Dashboard** | GET | `/api/v1/admin/dashboard/` |
+| **Usuarios** | GET, POST | `/api/v1/admin/users/` |
+| **Usuario (detalle)** | GET, PUT, DELETE | `/api/v1/admin/users/{id}/` |
+| **Órdenes (todas)** | GET | `/api/v1/admin/all-orders/` |
+| **Orden (detalle)** | GET, PATCH, DELETE | `/api/v1/admin/all-orders/{id}/` |
+| **Productos** | GET, POST | `/api/v1/admin/products/` |
+| **Producto (detalle)** | GET, PUT, DELETE | `/api/v1/admin/products/{id}/` |
+| **Categorías** | GET, POST | `/api/v1/admin/categories/` |
+| **Categoría (detalle)** | GET, PUT, DELETE | `/api/v1/admin/categories/{id}/` |
+| **Imágenes** | GET, POST, DELETE | `/api/v1/admin/product-images/` |
 
 ---
 
-### PRODUCTOS
+## 1. Dashboard
 
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| GET | `/api/v1/products/` | Listar productos (paginado) |
-| GET | `/api/v1/products/{id}/` | Ver producto específico |
-| POST | `/api/v1/products/` | Crear producto |
-| PUT | `/api/v1/products/{id}/` | Actualizar producto |
-| DELETE | `/api/v1/products/{id}/` | Eliminar producto |
-| GET | `/api/v1/products/featured/` | Productos destacados |
-| GET | `/api/v1/products/?search=query` | Buscar productos |
-| GET | `/api/v1/products/?category=1` | Filtrar por categoría |
+### GET /api/v1/admin/dashboard/
+Retorna estadísticas del sistema.
 
-#### Estructura Producto (Request POST/PUT)
+**Response:**
 ```json
 {
-    "name": "Nombre del producto",
-    "description": "Descripción",
+    "orders": {
+        "total": 100,
+        "pending": 5,
+        "processing": 2,
+        "completed": 80,
+        "cancelled": 13
+    },
+    "products": {
+        "total": 50,
+        "active": 45
+    },
+    "users": {
+        "total": 25
+    },
+    "revenue": "15000.00"
+}
+```
+
+---
+
+## 2. Usuarios
+
+### Listar usuarios
+```
+GET /api/v1/admin/users/
+Query params: ?search=email&ordering=-created_at
+```
+
+**Response:**
+```json
+{
+    "count": 25,
+    "results": [
+        {
+            "id": 1,
+            "email": "admin@admin.com",
+            "username": "admin",
+            "first_name": "Admin",
+            "last_name": "User",
+            "is_staff": true,
+            "is_superuser": true,
+            "is_active": true,
+            "created_at": "2024-01-01T00:00:00Z"
+        }
+    ]
+}
+```
+
+### Crear usuario
+```
+POST /api/v1/admin/users/
+{
+    "email": "user@email.com",
+    "username": "username",
+    "password": "password123",
+    "password_confirm": "password123",
+    "first_name": "Juan",
+    "last_name": "Pérez",
+    "is_staff": false,
+    "is_active": true
+}
+```
+
+### Actualizar usuario
+```
+PUT /api/v1/admin/users/{id}/
+{
+    "first_name": "Nuevo nombre",
+    "is_active": false
+}
+```
+
+### Eliminar usuario
+```
+DELETE /api/v1/admin/users/{id}/
+```
+
+---
+
+## 3. Órdenes (todas las del sistema)
+
+### Listar todas las órdenes
+```
+GET /api/v1/admin/all-orders/
+Query params: 
+    ?status=pending
+    ?search=juan
+    ?ordering=-created_at
+```
+
+**Response:**
+```json
+{
+    "count": 100,
+    "results": [
+        {
+            "id": 1,
+            "user": 1,
+            "products": [
+                {"id": 1, "name": "Producto", "price": "99.99", "quantity": 2, "subtotal": "199.98"}
+            ],
+            "total_amount": "199.98",
+            "status": "pending",
+            "customer_name": "Juan Pérez",
+            "customer_phone": "+5351234567",
+            "customer_address": "Calle 123",
+            "notes": "Entregar mañana",
+            "created_at": "2024-01-01T00:00:00Z"
+        }
+    ]
+}
+```
+
+### Actualizar estado de orden
+```
+PATCH /api/v1/admin/all-orders/{id}/
+{
+    "status": "completed"  // pending, processing, completed, cancelled
+}
+```
+
+### Ver orden específica
+```
+GET /api/v1/admin/all-orders/{id}/
+```
+
+### Eliminar orden
+```
+DELETE /api/v1/admin/all-orders/{id}/
+```
+
+---
+
+## 4. Productos
+
+### Listar productos
+```
+GET /api/v1/admin/products/
+Query params:
+    ?search=iphone
+    ?category=1
+    ?ordering=-created_at
+```
+
+### Crear producto
+```
+POST /api/v1/admin/products/
+{
+    "name": "Nuevo Producto",
+    "description": "Descripción del producto",
     "price": 99.99,
     "compare_price": 129.99,
     "stock": 10,
@@ -112,217 +194,130 @@ Authorization: Bearer <access_token>
 }
 ```
 
+### Actualizar producto
+```
+PUT /api/v1/admin/products/{id}/
+```
+
+### Eliminar producto
+```
+DELETE /api/v1/admin/products/{id}/
+```
+
 ---
 
-### CATEGORÍAS
+## 5. Categorías
 
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| GET | `/api/v1/products/categories/` | Listar categorías |
-| GET | `/api/v1/products/categories/{id}/` | Ver categoría |
-| POST | `/api/v1/products/categories/` | Crear categoría |
-| PUT | `/api/v1/products/categories/{id}/` | Actualizar categoría |
-| DELETE | `/api/v1/products/categories/{id}/` | Eliminar categoría |
-| GET | `/api/v1/products/categories/{id}/subcategories/` | Subcategorías |
+### Listar categorías
+```
+GET /api/v1/admin/categories/
+```
 
-#### Estructura Categoría (Request POST/PUT)
-```json
+### Crear categoría
+```
+POST /api/v1/admin/categories/
 {
-    "name": "Electrónica",
+    "name": "Nueva Categoría",
     "description": "Descripción",
     "parent": null,
     "is_active": true
 }
 ```
-- `parent`: ID de categoría padre (null para categorías raíz)
+
+- `parent`: ID de categoría padre (null para raíz)
+
+### Actualizar/Eliminar
+```
+PUT /api/v1/admin/categories/{id}/
+DELETE /api/v1/admin/categories/{id}/
+```
 
 ---
 
-### IMÁGENES DE PRODUCTOS
+## 6. Imágenes
 
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| GET | `/api/v1/products/images/` | Listar todas las imágenes |
-| POST | `/api/v1/products/images/` | Subir imagen |
-| DELETE | `/api/v1/products/images/{id}/` | Eliminar imagen |
-
-#### Subir Imagen
+### Subir imagen
 ```
-POST /api/v1/products/images/
+POST /api/v1/admin/product-images/
 Content-Type: multipart/form-data
-Authorization: Bearer <token>
+Body: image=archivo
+```
 
-Body:
-- image: archivo (required)
-- alt_text: texto alternativo (optional)
-- is_primary: true/false (optional)
-
-Response (201):
+**Response:**
+```json
 {
     "id": 1,
-    "image": "/api/v1/media/products/imagen.jpg",
-    "alt_text": "iPhone 15",
-    "is_primary": true
+    "image": "/api/v1/media/products/img.jpg",
+    "alt_text": "",
+    "is_primary": false
 }
 ```
 
-**Nota**: Para associate images a un producto, usar `image_ids` al crear/actualizar el producto.
+### Listar imágenes
+```
+GET /api/v1/admin/product-images/
+```
+
+### Eliminar imagen
+```
+DELETE /api/v1/admin/product-images/{id}/
+```
 
 ---
 
-### ÓRDENES
+## Autenticación
 
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| GET | `/api/v1/orders/` | Mis órdenes (usuario) |
-| GET | `/api/v1/orders/{id}/` | Ver orden específica |
-| POST | `/api/v1/orders/` | Crear orden (registrada) |
-| POST | `/api/v1/orders/checkout/` | Checkout → WhatsApp |
-
-**Para admin**: Usar Django Admin en `/api/v1/admin/`
-
-#### Actualizar Estado de Orden (PATCH)
+### Login
 ```
-PATCH /api/v1/orders/{id}/
-Authorization: Bearer <token>
-Content-Type: application/json
-
+POST /api/v1/users/login/
 {
-    "status": "completed"
+    "email": "admin@admin.com",
+    "password": "admin123"
 }
 ```
 
-Estados: `pending`, `processing`, `completed`, `cancelled`
-
----
-
-### DASHBOARD / ADMIN
-
-Para acceder usar Django Admin integrado:
+El token se usa en los headers:
 ```
-/api/v1/admin/
-```
-
-**Credenciales**: usuario admin creado en el sistema
-
----
-
-## Parámetros de Query
-
-### Paginación
-```
-GET /api/v1/products/?page=2
-```
-
-### Búsqueda
-```
-GET /api/v1/products/?search=iphone
-GET /api/v1/products/categories/?search=ropa
-```
-
-### Ordenamiento
-```
-GET /api/v1/products/?ordering=price        # menor a mayor
-GET /api/v1/products/?ordering=-price       # mayor a menor
-GET /api/v1/products/?ordering=name
-GET /api/v1/products/?ordering=-created_at  # más recientes
-```
-
-### Filtrado
-```
-GET /api/v1/products/?category=1
-GET /api/v1/products/?category=1&subcategory=2
+Authorization: Bearer <token>
 ```
 
 ---
 
-## Imágenes
-
-Las imágenes se sirven desde:
-```
-/api/v1/media/products/nombre-imagen.jpg
-/api/v1/media/categories/nombre-imagen.jpg
-```
-
-**Nota**: Concatenar con el dominio base, ej:
-```
-https://inventory.cloudns.be/api/v1/media/products/imagen.jpg
-```
-
----
-
-## Códigos de Estado HTTP
-
-| Código | Significado |
-|--------|-------------|
-| 200 | OK |
-| 201 | Creado |
-| 400 | Bad Request |
-| 401 | No autorizado |
-| 403 | Prohibido |
-| 404 | No encontrado |
-
----
-
-## Ejemplo: Flujo Admin
+## Ejemplo: Uso desde Frontend
 
 ```javascript
-// 1. Login
-const loginRes = await fetch('/api/v1/users/login/', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-        email: 'admin@admin.com',
-        password: 'admin123'
-    })
-});
-const { tokens } = await loginRes.json();
-const token = tokens.access;
+const API = 'https://tu-dominio.com/api/v1';
+const token = localStorage.getItem('access_token');
 
-// 2. Subir imagen
-const formData = new FormData();
-formData.append('image', fileInput.files[0]);
-const imgRes = await fetch('/api/v1/products/images/', {
-    method: 'POST',
-    headers: {'Authorization': `Bearer ${token}`},
-    body: formData
-});
-const { id: imageId } = await imgRes.json();
+const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+};
 
-// 3. Crear producto con imagen
-await fetch('/api/v1/products/', {
+// 1. Dashboard
+const dash = await fetch(`${API}/admin/dashboard/`, { headers });
+const stats = await dash.json();
+
+// 2. Todas las órdenes
+const orders = await fetch(`${API}/admin/all-orders/`, { headers });
+const ordersData = await orders.json();
+
+// 3. Cambiar estado
+await fetch(`${API}/admin/all-orders/1/`, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify({ status: 'completed' })
+});
+
+// 4. Crear producto
+await fetch(`${API}/admin/products/`, {
     method: 'POST',
-    headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-    },
+    headers,
     body: JSON.stringify({
-        name: 'Nuevo Producto',
+        name: 'Nuevo',
         price: 99.99,
         stock: 10,
-        category: 1,
-        image_ids: [imageId]
+        category: 1
     })
 });
-
-// 4. Listar productos
-const productsRes = await fetch('/api/v1/products/', {
-    headers: {'Authorization': `Bearer ${token}`}
-});
-const products = await productsRes.json();
-
-// 5. Ver órdenes
-const ordersRes = await fetch('/api/v1/orders/', {
-    headers: {'Authorization': `Bearer ${token}`}
-});
-const orders = await ordersRes.json();
 ```
-
----
-
-## Notas Importantes
-
-1. **Imágenes**: Siempre usar `FormData` para subir
-2. **Categorías**: Las subcategorías tienen `parent` = ID de la categoría padre
-3. **Token**: Incluir en header `Authorization: Bearer <token>`
-4. **Admin completo**: Usar Django Admin en `/api/v1/admin/`

@@ -62,7 +62,7 @@ jobs:
           sleep 10
 
           echo "=== Creating migrations ==="
-          docker-compose exec -T web python manage.py makemigrations users products orders --noinput
+          docker-compose exec -T web python manage.py makemigrations users products orders admin --noinput
 
           echo "=== Applying migrations ==="
           docker-compose exec -T web python manage.py migrate --noinput
