@@ -45,15 +45,15 @@ jobs:
         run: |
           echo "Waiting for PostgreSQL..."
           sleep 15
-          until docker-compose exec -T db pg_isready -U basedato1 -p 5433;  do
+          until docker-compose exec -T db pg_isready -U basedato1 -p 5432;  do
             sleep 3
           done
           echo "PostgreSQL ready!"
 
       - name: Create database if not exists
         run: |
-          docker-compose exec -T db psql -U basedato1 -p 5433 -tc "SELECT 1 FROM pg_database WHERE datname = 'ecommerce'" | grep -q 1 || \
-          docker-compose exec -T db psql -U basedato1 -p 5433 -c "CREATE DATABASE ecommerce"
+          docker-compose exec -T db psql -U basedato1 -p 5432 -tc "SELECT 1 FROM pg_database WHERE datname = 'ecommerce'" | grep -q 1 || \
+          docker-compose exec -T db psql -U basedato1 -p 5432 -c "CREATE DATABASE ecommerce"
           echo "Database ready!"
 
       - name: Run migrations and setup
