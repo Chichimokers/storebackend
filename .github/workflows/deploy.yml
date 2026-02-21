@@ -62,13 +62,13 @@ jobs:
           sleep 10
 
           echo "=== Creating migrations ==="
-          docker-compose exec web python manage.py makemigrations users products orders --noinput
+          docker-compose exec -T web python manage.py makemigrations users products orders --noinput
 
           echo "=== Applying migrations ==="
-          docker-compose exec web python manage.py migrate --noinput
+          docker-compose exec -T web python manage.py migrate --noinput
 
           echo "=== Creating superuser ==="
-          docker-compose exec web python manage.py shell -c "
+          docker-compose exec -T web python manage.py shell -c "
           from apps.users.models import User
           if not User.objects.filter(email='admin@admin.com').exists():
               User.objects.create_superuser(email='admin@admin.com', password='admin123')
@@ -78,7 +78,7 @@ jobs:
           "
 
           echo "=== Collecting static files ==="
-          docker-compose exec web python manage.py collectstatic --noinput
+          docker-compose exec -T web python manage.py collectstatic --noinput
 
       - name: Verify deployment
         run: |
