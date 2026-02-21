@@ -1,0 +1,56 @@
+services:
+  # PostgreSQL Database
+  tienda_db:
+    image: postgres:15-alpine
+    container_name: store_db
+    user: root
+    environment:
+      POSTGRES_DB: ${DB_NAME:-ecommerce}
+      POSTGRES_USER: ${DB_USER:-basedato1}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-basededato2}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-basedato1}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - store_network
+    restart: unless-stopped
+
+  # Django Web Application
+  web:
+    build: .
+    container_name: store_web
+    command: >
+      sh -c "python manage.py collectstatic --noinput &&
+      gunicorn --bind 0.0.0.0:8000 --workers 4 --access-logfile /app/logs/access.log --error-logfile /app/logs/error.log --log-level info config.wsgi:application"
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env.example
+    environment:
+      - DB_HOST=db
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - static_volume:/app/static
+      - images_volume:/app/media
+      - logs_volume:/app/logs
+    networks:
+      - store_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  static_volume:
+  images_volume:
+  logs_volume:
+
+networks:
+  store_network:
+    driver: bridge

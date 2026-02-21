@@ -1,0 +1,93 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy Store Backend
+    runs-on: self-hosted
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Create .env file
+        run: |
+          cat > .env << 'EOF'
+          DEBUG=False
+          SECRET_KEY=${{ secrets.SECRET_KEY }}
+          ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}
+          DB_ENGINE=django.db.backends.postgresql
+          DB_NAME=${{ secrets.DB_NAME }}
+          DB_USER=${{ secrets.DB_USER }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_HOST=db
+          DB_PORT=5432
+          WHATSAPP_PHONE=${{ secrets.WHATSAPP_PHONE }}
+          WHATSAPP_BUSINESS_NAME=${{ secrets.WHATSAPP_BUSINESS_NAME }}
+          EOF
+      
+      - name: Stop and remove all containers
+        run: |
+          docker-compose down --remove-orphans || true
+          docker rm -f store_web store_db 2>/dev/null || true
+      
+      - name: Build all containers
+        run: docker-compose build
+      
+      - name: Start database
+        run: docker-compose up -d db
+      
+      - name: Wait for database to be ready
+        run: |
+          echo "Waiting for PostgreSQL..."
+          sleep 15
+          until docker-compose exec -T db pg_isready -U basedato1; do
+            sleep 3
+          done
+          echo "PostgreSQL ready!"
+      
+      - name: Create database if not exists
+        run: |
+          docker-compose exec -T db psql -U basedato1 -tc "SELECT 1 FROM pg_database WHERE datname = 'ecommerce'" | grep -q 1 || \
+          docker-compose exec -T db psql -U basedato1 -c "CREATE DATABASE ecommerce"
+          echo "Database ready!"
+      
+      - name: Run migrations and setup
+        run: |
+          echo "=== Creating migrations ==="
+          docker-compose run --rm web python manage.py makemigrations users --noinput
+          docker-compose run --rm web python manage.py makemigrations products --noinput
+          docker-compose run --rm web python manage.py makemigrations orders --noinput
+          
+          echo "=== Applying migrations ==="
+          docker-compose run --rm web python manage.py migrate --noinput
+          
+          echo "=== Creating superuser ==="
+          docker-compose run --rm web python manage.py shell -c "
+          from apps.users.models import User
+          if not User.objects.filter(email='admin@admin.com').exists():
+              User.objects.create_superuser(email='admin@admin.com', password='admin123')
+              print('Superuser created: admin@admin.com / admin123')
+          else:
+              print('Superuser already exists')
+          "
+          
+          echo "=== Collecting static files ==="
+          docker-compose run --rm web python manage.py collectstatic --noinput
+      
+      - name: Start web server
+        run: |
+          docker-compose up -d web
+          sleep 5
+      
+      - name: Verify deployment
+        run: |
+          echo "=== Container Status ==="
+          docker-compose ps
+          echo ""
+          echo "=== Web Logs ==="
+          docker-compose logs --tail=30 web
