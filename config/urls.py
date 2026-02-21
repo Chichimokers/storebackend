@@ -7,7 +7,6 @@ from django.urls import path, include, re_path
 from django.http import JsonResponse
 from django.views.static import serve
 from django.conf import settings
-from django.conf.urls.static import static
 
 
 def health_check(request):
@@ -49,13 +48,11 @@ urlpatterns = [
     path('api/v1/admin/', admin.site.urls),
 ]
 
-if not settings.DEBUG:
-    urlpatterns += [
-        re_path(r'^api/v1/static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
-        re_path(r'^api/v1/media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
-    ]
-else:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Serve static and media files always (both DEBUG=True and DEBUG=False)
+urlpatterns += [
+    re_path(r'^api/v1/static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
+    re_path(r'^api/v1/media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+]
 
 admin.site.site_header = 'Store Backend'
 admin.site.site_title = 'Store Admin'
