@@ -64,7 +64,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def checkout(request):
     serializer = OrderCheckoutSerializer(data=request.data)
     if serializer.is_valid():
@@ -84,6 +84,12 @@ def checkout(request):
                 )
             
             quantity = item['quantity']
+            if quantity > product.stock:
+                return Response(
+                    {'error': f'Not enough stock for {product.name}. Available: {product.stock}'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
             subtotal = product.price * quantity
             total += subtotal
             
@@ -103,11 +109,23 @@ def checkout(request):
         message += "\n".join(message_parts)
         message += f"\n\nTotal: ${total}"
         
+        order = Order.objects.create(
+            user=request.user,
+            products=products_list,
+            total_amount=total,
+            status='pending',
+            customer_name=customer_name,
+            customer_phone=serializer.validated_data['customer_phone'],
+            customer_address=serializer.validated_data.get('customer_address', ''),
+            notes=serializer.validated_data.get('notes', '')
+        )
+        
         whatsapp_phone = settings.WHATSAPP_PHONE
         encoded_message = quote(message)
         whatsapp_url = f"https://wa.me/{whatsapp_phone.replace('+', '')}?text={encoded_message}"
         
         return Response({
+            'order_id': order.id,
             'phone': whatsapp_phone,
             'message': message,
             'whatsapp_url': whatsapp_url,

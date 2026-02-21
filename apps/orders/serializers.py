@@ -48,6 +48,8 @@ class OrderCheckoutSerializer(serializers.Serializer):
     )
     customer_name = serializers.CharField(max_length=200)
     customer_phone = serializers.CharField(max_length=20)
+    customer_address = serializers.CharField(required=False, allow_blank=True, default='')
+    notes = serializers.CharField(required=False, allow_blank=True, default='')
 
     def validate_products(self, value):
         if not value:
