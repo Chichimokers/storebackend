@@ -1,6 +1,6 @@
 services:
   # PostgreSQL Database
-  tienda_db:
+  db:
     image: postgres:15-alpine
     container_name: store_db
     user: root
@@ -34,9 +34,9 @@ services:
     env_file:
       - .env.example
     environment:
-      - DB_HOST=tienda_db
+      - DB_HOST=db
     depends_on:
-      tienda_db:
+      db:
         condition: service_healthy
     volumes:
       - static_volume:/app/static
