@@ -71,7 +71,7 @@ jobs:
           docker-compose exec -T web python manage.py shell -c "
           from apps.users.models import User
           if not User.objects.filter(email='admin@admin.com').exists():
-              User.objects.create_superuser(email='admin@admin.com', password='admin123')
+              User.objects.create_superuser(username='admin', email='admin@admin.com', password='admin123')
               print('Superuser created: admin@admin.com / admin123')
           else:
               print('Superuser already exists')
