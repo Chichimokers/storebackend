@@ -22,6 +22,7 @@ services:
     restart: unless-stopped
 
   # Django Web Application
+
   web:
     build: .
     container_name: store_web
@@ -33,9 +34,9 @@ services:
     env_file:
       - .env.example
     environment:
-      - DB_HOST=db
+      - DB_HOST=tienda_db
     depends_on:
-      db:
+      tienda_db:
         condition: service_healthy
     volumes:
       - static_volume:/app/static
