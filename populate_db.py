@@ -69,13 +69,13 @@ def create_products():
         {'name': 'iPhone 15 Pro', 'price': 999.99, 'cat': 'Smartphones', 'stock': 10},
         {'name': 'Samsung Galaxy S24', 'price': 899.99, 'cat': 'Smartphones', 'stock': 15},
         {'name': 'Google Pixel 8', 'price': 699.99, 'cat': 'Smartphones', 'stock': 8},
-        {'name': 'MacBook Pro 14"', 'price': 1999.99, 'cat': 'Laptops', 'stock': 5},
+        {'name': 'MacBook Pro 14', 'price': 1999.99, 'cat': 'Laptops', 'stock': 5},
         {'name': 'Dell XPS 15', 'price': 1499.99, 'cat': 'Laptops', 'stock': 7},
         {'name': 'ThinkPad X1 Carbon', 'price': 1299.99, 'cat': 'Laptops', 'stock': 6},
-        {'name': 'iPad Pro 12.9"', 'price': 1099.99, 'cat': 'Tablets', 'stock': 12},
+        {'name': 'iPad Pro 12.9', 'price': 1099.99, 'cat': 'Tablets', 'stock': 12},
         {'name': 'Samsung Tab S9', 'price': 849.99, 'cat': 'Tablets', 'stock': 9},
         
-        {'name': 'Camiseta Básica', 'price': 19.99, 'cat': 'Hombres', 'stock': 50},
+        {'name': 'Camiseta Basica', 'price': 19.99, 'cat': 'Hombres', 'stock': 50},
         {'name': 'Jeans Slim', 'price': 49.99, 'cat': 'Hombres', 'stock': 30},
         {'name': 'Chaqueta de Cuero', 'price': 149.99, 'cat': 'Hombres', 'stock': 15},
         {'name': 'Vestido Elegante', 'price': 79.99, 'cat': 'Mujeres', 'stock': 25},
@@ -84,30 +84,30 @@ def create_products():
         {'name': 'Zapatillas Running', 'price': 89.99, 'cat': 'Zapatos', 'stock': 40},
         {'name': 'Botas de Cuero', 'price': 119.99, 'cat': 'Zapatos', 'stock': 22},
         
-        {'name': 'Sofá 3 Plazas', 'price': 599.99, 'cat': 'Muebles', 'stock': 8},
+        {'name': 'Sofa 3 Plazas', 'price': 599.99, 'cat': 'Muebles', 'stock': 8},
         {'name': 'Mesa de Centro', 'price': 199.99, 'cat': 'Muebles', 'stock': 12},
         {'name': 'Silla Gamer', 'price': 299.99, 'cat': 'Muebles', 'stock': 10},
-        {'name': 'Lámpara de Pie', 'price': 49.99, 'cat': 'Decoración', 'stock': 25},
-        {'name': 'Marco de Fotos', 'price': 15.99, 'cat': 'Decoración', 'stock': 60},
+        {'name': 'Lampara de Pie', 'price': 49.99, 'cat': 'Decoracion', 'stock': 25},
+        {'name': 'Marco de Fotos', 'price': 15.99, 'cat': 'Decoracion', 'stock': 60},
         {'name': 'Juego de Ollas', 'price': 89.99, 'cat': 'Cocina', 'stock': 15},
         {'name': 'Batidora Profesional', 'price': 69.99, 'cat': 'Cocina', 'stock': 20},
-        {'name': 'Juego de Sábanas', 'price': 39.99, 'cat': 'Dormitorio', 'stock': 35},
+        {'name': 'Juego de Sabanas', 'price': 39.99, 'cat': 'Dormitorio', 'stock': 35},
         
         {'name': 'Mancuernas 10kg', 'price': 29.99, 'cat': 'Fitness', 'stock': 50},
         {'name': 'Esterilla de Yoga', 'price': 19.99, 'cat': 'Fitness', 'stock': 40},
         {'name': 'Bola de Ejercicio', 'price': 15.99, 'cat': 'Fitness', 'stock': 30},
-        {'name': 'Balón de Fútbol', 'price': 24.99, 'cat': 'Fútbol', 'stock': 45},
-        {'name': 'Guantes de Portero', 'price': 34.99, 'cat': 'Fútbol', 'stock': 20},
-        {'name': 'Balón de Básquetbol', 'price': 29.99, 'cat': 'Básquetbol', 'stock': 25},
-        {'name': 'Bicicleta Estática', 'price': 399.99, 'cat': 'Cycling', 'stock': 8},
+        {'name': 'Balon de Futbol', 'price': 24.99, 'cat': 'Futbol', 'stock': 45},
+        {'name': 'Guantes de Portero', 'price': 34.99, 'cat': 'Futbol', 'stock': 20},
+        {'name': 'Balon de Basquetbol', 'price': 29.99, 'cat': 'Basquetbol', 'stock': 25},
+        {'name': 'Bicicleta Estatica', 'price': 399.99, 'cat': 'Cycling', 'stock': 8},
         {'name': 'Casco de Ciclismo', 'price': 49.99, 'cat': 'Cycling', 'stock': 30},
         
         {'name': 'El Principito', 'price': 12.99, 'cat': 'Novelas', 'stock': 100},
-        {'name': 'Cien Años de Soledad', 'price': 15.99, 'cat': 'Novelas', 'stock': 80},
+        {'name': 'Cien Anos de Soledad', 'price': 15.99, 'cat': 'Novelas', 'stock': 80},
         {'name': 'Harry Potter Pack', 'price': 49.99, 'cat': 'Novelas', 'stock': 50},
-        {'name': 'Matemáticas Avanzadas', 'price': 39.99, 'cat': 'Educativos', 'stock': 30},
+        {'name': 'Matematicas Avanzadas', 'price': 39.99, 'cat': 'Educativos', 'stock': 30},
         {'name': 'Aprende Python', 'price': 24.99, 'cat': 'Educativos', 'stock': 45},
-        {'name': 'Batman Comic #1', 'price': 9.99, 'cat': 'Comics', 'stock': 200},
+        {'name': 'Batman Comic 1', 'price': 9.99, 'cat': 'Comics', 'stock': 200},
         {'name': 'Spider-Man Comic', 'price': 9.99, 'cat': 'Comics', 'stock': 180},
         {'name': 'Revista Tech', 'price': 5.99, 'cat': 'Revistas', 'stock': 100},
     ]
@@ -117,12 +117,12 @@ def create_products():
         if category:
             product, created = Product.objects.get_or_create(
                 name=prod['name'],
+                category=category,
                 defaults={
                     'description': f'High quality {prod["name"]} for sale. Best price in the market.',
                     'price': Decimal(str(prod['price'])),
-                    'compare_price': Decimal(str(prod['price'] * 1.2)),
+                    'compare_price': Decimal(str(round(prod['price'] * 1.2, 2))),
                     'stock': prod['stock'],
-                    'category': category,
                     'is_active': True
                 }
             )
