@@ -2,8 +2,9 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 
+from apps.panel.views import AdminOrderViewSet, AdminUserViewSet, dashboard
 from apps.users.views import register, login, logout, profile, change_password
-from apps.admin.views import AdminUserViewSet, AdminOrderViewSet, dashboard
+
 from apps.products.views import ProductViewSet, CategoryViewSet, ProductImageViewSet
 
 router = DefaultRouter()
