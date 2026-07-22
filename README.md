@@ -1,20 +1,18 @@
 # storebackend
 
-## Tecnologias
-- Docker
-- Dockerfile
-- Python
+## Lenguajes
+- {'size': 1341, 'node': {'name': 'Dockerfile'}}
+- {'size': 51731, 'node': {'name': 'Python'}}
 
 ## Instalacion
 
 ```bash
-pip install -r requirements.txt
-python main.py
+git clone https://github.com/Chichimokers/storebackend.git
+cd storebackend
+pip install -r requirements.txt  # o npm install
+python run.py  # o npm run dev
 ```
 
-## Descripcion
-
-Proyecto storebackend.
-
 ---
-(c) 2026 Chichimokers -- https://github.com/Chichimokers/storebackend
+
+(c) 2026 Chichimokers - Proyecto Privado
