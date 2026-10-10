@@ -18,7 +18,6 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-.env
 .venv
 env/
 venv/
@@ -34,4 +33,5 @@ static/
 *.swp
 *.swo
 .idea/
-.vscode/
+config.bat
+node_modules
